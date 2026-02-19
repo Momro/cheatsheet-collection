@@ -33,3 +33,8 @@ mp0: /mnt/pve/<nmae>,mp=<location in LXC>,mountoptions=noatime,replicate=0
 * try `touch <file>` and `rm <file>`
 
 Although you cannot mount a subfolder in NFS, you can probably mount the subfolder *inside* the LXC, so eg. `mp0: /mnt/pve/<nmae>/<some subfolder>,mp=<location in LXC>,mountoptions=noatime,replicate=0`
+
+## useful resources
+
+* https://forum.proxmox.com/threads/tutorial-mounting-nfs-share-to-an-unprivileged-lxc.138506/
+* https://www.simplehomelab.com/udms-part-9-bind-mount-remote-storage-in-proxmox-lxc-containers/ (ignore the stuff with IDs, didnt matter for me in PVE 9)
