@@ -78,6 +78,31 @@ systemctl restart netdata
 
 # test
 
-go to `http://<host ip>:19999`
-click the tiny little "skip this" on the bottom or somewhere to remove the large "connect to our cloud" screen
-done
+* go to `http://<host ip>:19999`
+* click the tiny little "skip this" on the bottom or somewhere to remove the large "connect to our cloud" screen
+* done
+
+# host restriction
+
+* create lxc
+* install this proxy:
+
+```
+curl -fsSL https://deno.land/install.sh | sh
+# Neustart + SSH neu rein
+git clone https://github.com/unixfox/netdata-unlock-5-nodes
+cd netdata-unlock-5-nodes
+echo "NETDATA_BASE_URL=http://<netdata host>:19999" > .env
+deno task run
+```
+
+* go back to `http://<netdata host>:19999`
+* select 1-5 nodes
+* hit save
+
+* go back to `http://<netdata proxy>:8000`
+* enjoy
+
+see also [the project](https://github.com/unixfox/netdata-unlock-5-nodes) and 
+this [issue](https://github.com/unixfox/netdata-unlock-5-nodes/issues/3)
+and this [related issue](https://github.com/unixfox/netdata-unlock-5-nodes/issues/1)
