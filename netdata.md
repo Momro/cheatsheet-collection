@@ -61,6 +61,14 @@ wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /
 
 ## config
 
+on netdata host:
+```
+# get root uuid:
+cat /etc/netdata/stream.conf  | grep "API_KEY] is" -A 1 | grep -v API | sed -e 's/\[//' | sed -e 's/\]//'
+```
+
+on client:
+
 ```
 cd /etc/netdata
 # edit / create the config
