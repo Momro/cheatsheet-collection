@@ -1,5 +1,12 @@
 # host config 
 
+Chances are you don't want to edit config files with nano, so here is how you set `vim` as default:
+
+``` 
+update-alternatives --config editor
+<select vi>
+``` 
+
 ## install
 
 ```
