@@ -1,5 +1,6 @@
 ```
 # download the installer, use stable channel, do not submit data
+# this will install like 600mb via `apt`
 wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --stable-channel --disable-telemetry
 
 cd /etc/netdata
@@ -36,6 +37,12 @@ The config is already separated into 3 parts:
     allow from = *
     default history = 3600
     default memory mode = dbengine
+```
+
+# on both
+
+```
+systemctl restart netdata
 ```
 
 # test
