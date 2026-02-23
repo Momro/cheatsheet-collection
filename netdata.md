@@ -121,3 +121,13 @@ deno task run
 see also [the project](https://github.com/unixfox/netdata-unlock-5-nodes) and 
 this [issue](https://github.com/unixfox/netdata-unlock-5-nodes/issues/3)
 and this [related issue](https://github.com/unixfox/netdata-unlock-5-nodes/issues/1)
+
+# uninstall
+
+```
+systemctl stop netdata
+killall netdata 2>/dev/null
+wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --uninstall
+```
+
+see also these [instructions on the provider page](https://learn.netdata.cloud/docs/netdata-agent/maintenance/uninstall)
