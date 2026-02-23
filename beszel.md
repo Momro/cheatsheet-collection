@@ -17,7 +17,7 @@ apt install curl
 
 TOKEN="some-uuid-you-got-from-system"
 URL="https://monitoring.exmple.com"
-FINGERPRINT="ssh-ed25519 AAAAC3sfwerwejrowejrwerwerevmcnvmcnvnlijfoiV"
+FINGERPRINT="ssh-ed25519 <insert fingerprint of host here>"
 
 curl -sL https://get.beszel.dev -o /tmp/install-agent.sh && chmod +x /tmp/install-agent.sh && /tmp/install-agent.sh -p 45876 -k "$FINGERPRINT" -t "$TOKEN" -url "$URL"
 ```
