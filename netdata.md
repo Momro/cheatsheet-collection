@@ -125,9 +125,7 @@ and this [related issue](https://github.com/unixfox/netdata-unlock-5-nodes/issue
 # uninstall
 
 ```
-systemctl stop netdata
-killall netdata 2>/dev/null
-wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --uninstall
+systemctl stop netdata && echo "[+] stopped netdata" && killall netdata 2>/dev/null && echo "[+] netdata killed" && wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && sh /tmp/netdata-kickstart.sh --uninstall && echo "[+] unsinstall finished"
 ```
 
 see also these [instructions on the provider page](https://learn.netdata.cloud/docs/netdata-agent/maintenance/uninstall)
