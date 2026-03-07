@@ -38,3 +38,7 @@ Although you cannot mount a subfolder in NFS, you can probably mount the subfold
 
 * https://forum.proxmox.com/threads/tutorial-mounting-nfs-share-to-an-unprivileged-lxc.138506/
 * https://www.simplehomelab.com/udms-part-9-bind-mount-remote-storage-in-proxmox-lxc-containers/ (ignore the stuff with IDs, didnt matter for me in PVE 9)
+
+
+# PBS Backup Trace
+
