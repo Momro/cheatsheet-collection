@@ -13,6 +13,8 @@ get DAVx5 app:
 
 ## tasks
 
+overall straight-forward. only draw-back: you cannot create new lists in the app. you have to do that on Nextcloud web. Sharing a list as well.
+
 ### app
 
 Tasks.org
