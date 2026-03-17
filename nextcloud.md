@@ -24,3 +24,21 @@ Tasks.org
 in DAVx5:
 
 address: `<nextcloud url>/remote.php/dav/calendars`
+
+## calendar
+
+### app
+
+get Etar. closest you get to google calendar
+
+* google: https://play.google.com/store/search?q=etar&c=apps&hl=de
+* f-droid: https://f-droid.org/de/packages/ws.xsoh.etar/
+
+
+### setup
+
+tbd
+
+## contacts
+
+tbd.
