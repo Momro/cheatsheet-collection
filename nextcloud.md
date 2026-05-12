@@ -76,6 +76,18 @@ DBPASS=$(sudo cat /var/lib/docker/volumes/nextcloud_aio_nextcloud/_data/config/c
 # change oc_nextcloud password
 docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER USER oc_nextcloud WITH PASSWORD '${DBPASS}';"
 
+###### fix db Permissions
+
+# 1. Sicherstellen, dass das Schema dem Nextcloud-User gehört
+docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "ALTER SCHEMA public OWNER TO oc_nextcloud;"
+
+# 2. Explizite Rechte für alle Tabellen und Sequenzen vergeben
+docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO oc_nextcloud;"
+docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO oc_nextcloud;"
+
+# 3. Den Suchpfad zur Sicherheit noch einmal fest hämmern
+docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "ALTER USER oc_nextcloud SET search_path TO public,oc_nextcloud;"
+
 ###### clean db environment
 
 # set search path of new user
