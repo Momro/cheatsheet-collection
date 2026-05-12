@@ -67,10 +67,10 @@ docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -
 7. change db admin password:
 ```
 # obtain db password
-sudo cat /var/lib/docker/volumes/nextcloud_aio_nextcloud/_data/config/config.php | grep dbpassword
+DBPASS=$(sudo cat /var/lib/docker/volumes/nextcloud_aio_nextcloud/_data/config/config.php | grep dbpassword | cut -d ' ' -f 5 | sed "s/[',]//g") ; echo $DBPASS
 
 # change oc_nextcloud password
-docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER USER oc_nextcloud WITH PASSWORD 'your password from above';"
+docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER USER oc_nextcloud WITH PASSWORD '${DBPASS}';"
 ```
 
 8. clean db environment
