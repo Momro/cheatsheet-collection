@@ -60,10 +60,6 @@ tbd.
 docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER DATABASE nextcloud_database OWNER TO oc_nextcloud;"
 docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "DO \$\$ DECLARE r RECORD; BEGIN FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' OWNER TO oc_nextcloud'; END LOOP; END \$\$;"
 
-# get Redis pass and clear cache
-PASS=$(docker exec nextcloud-aio-nextcloud grep "redis" -A 5 /var/www/html/config/config.php | grep "password" | cut -d"'" -f4)
-docker exec -it nextcloud-aio-redis redis-cli -a "$PASS" FLUSHALL
-
 # check if all users have been migrated (this should show a number equal to your users)
 docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "SELECT count(*) FROM oc_users;"
 ```
@@ -71,10 +67,27 @@ docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -
 7. change db admin password:
 ```
 # obtain db password
-cat /var/lib/docker/volumes/nextcloud_aio_nextcloud/_data/config/config.php | grep dbpassword
+sudo cat /var/lib/docker/volumes/nextcloud_aio_nextcloud/_data/config/config.php | grep dbpassword
+
 # change oc_nextcloud password
 docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER USER oc_nextcloud WITH PASSWORD 'your password from above';"
 ```
+
+8. clean db environment
+
+```
+# set search path of new user
+docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "ALTER USER oc_nextcloud SET search_path TO public;"
+
+# upgrade instance
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ upgrade
+
+# get Redis pass and clear cache
+PASS=$(docker exec nextcloud-aio-nextcloud grep "redis" -A 5 /var/www/html/config/config.php | grep "password" | cut -d"'" -f4)
+docker exec -it nextcloud-aio-redis redis-cli -a "$PASS" FLUSHALL
+
+```
+
 8. Set trusted proxy -> `docker exec --user www-data -it nextcloud-aio-nextcloud php occ config:system:set trusted_proxies 0 --value="192.168.0.51"` 
 9. stop all containers via AIO admin center (port 8080)
 10. restart containers
@@ -82,7 +95,13 @@ docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER U
 ```
 docker exec -it nextcloud-aio-nextcloud rm -rf /var/www/html/custom_apps/mail
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ app:install mail
-```  
+```
+
+Restart mail app
+```
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ app:disable mail
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ app:enable mail
+```
 
 # create talk bot for integration with Kuma
 
