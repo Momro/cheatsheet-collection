@@ -52,55 +52,56 @@ tbd.
 1. save your `./data/` folder somewhere else
 2. create sql dump
 3. run AIO, wait till it works
-4. delete current database content -> `docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"`
-5. import previous database -> `$ cat /home/achim/docker/nextcloud/nextcloud_dump.sql | docker exec -i nextcloud-aio-database psql -U nextcloud -d nextcloud_database`
-6. fix db user from nextcloud to oc_nextcloud
 
 ```
+# delete current database content
+docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+
+# import previous database
+DUMP=/home/achim/docker/nextcloud/nextcloud_dump.sql
+cat ${DUMP} | docker exec -i nextcloud-aio-database psql -U nextcloud -d nextcloud_database`
+
+# fix db user from nextcloud to oc_nextcloud
 docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER DATABASE nextcloud_database OWNER TO oc_nextcloud;"
 docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "DO \$\$ DECLARE r RECORD; BEGIN FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' OWNER TO oc_nextcloud'; END LOOP; END \$\$;"
 
 # check if all users have been migrated (this should show a number equal to your users)
 docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "SELECT count(*) FROM oc_users;"
-```
 
-7. change db admin password:
-```
+###### change db admin password
+
 # obtain db password
 DBPASS=$(sudo cat /var/lib/docker/volumes/nextcloud_aio_nextcloud/_data/config/config.php | grep dbpassword | cut -d ' ' -f 5 | sed "s/[',]//g") ; echo $DBPASS
 
 # change oc_nextcloud password
 docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER USER oc_nextcloud WITH PASSWORD '${DBPASS}';"
-```
 
-8. clean db environment
+###### clean db environment
 
-```
 # set search path of new user
 docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -c "ALTER USER oc_nextcloud SET search_path TO public;"
-
-# upgrade instance
-docker exec --user www-data -it nextcloud-aio-nextcloud php occ upgrade
 
 # get Redis pass and clear cache
 PASS=$(docker exec nextcloud-aio-nextcloud grep "redis" -A 5 /var/www/html/config/config.php | grep "password" | cut -d"'" -f4)
 docker exec -it nextcloud-aio-redis redis-cli -a "$PASS" FLUSHALL
 
+###### Final steps
+# upgrade instance
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ upgrade
 ```
 
-8. Set trusted proxy -> `docker exec --user www-data -it nextcloud-aio-nextcloud php occ config:system:set trusted_proxies 0 --value="192.168.0.51"` 
 9. stop all containers via AIO admin center (port 8080)
 10. restart containers
 11. login as admin, disable email, enable email; didn't work for me once, so I did this; had to enter credentials again, but worked instantly
-```
-docker exec -it nextcloud-aio-nextcloud rm -rf /var/www/html/custom_apps/mail
-docker exec --user www-data -it nextcloud-aio-nextcloud php occ app:install mail
-```
 
 Restart mail app
 ```
+# disable
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ app:disable mail
-docker exec --user www-data -it nextcloud-aio-nextcloud php occ app:enable mail
+# uninstall
+docker exec -it nextcloud-aio-nextcloud rm -rf /var/www/html/custom_apps/mail
+# install
+docker exec -it --user www-data  nextcloud-aio-nextcloud php occ app:install mail
 ```
 
 # create talk bot for integration with Kuma
