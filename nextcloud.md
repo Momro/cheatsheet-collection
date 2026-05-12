@@ -59,7 +59,7 @@ docker exec -it nextcloud-aio-database psql -U nextcloud -d nextcloud_database -
 
 # import previous database
 DUMP=/home/achim/docker/nextcloud/nextcloud_dump.sql
-cat ${DUMP} | docker exec -i nextcloud-aio-database psql -U nextcloud -d nextcloud_database`
+cat ${DUMP} | docker exec -i nextcloud-aio-database psql -U nextcloud -d nextcloud_database
 
 # fix db user from nextcloud to oc_nextcloud
 docker exec -it nextcloud-aio-database psql -U nextcloud -d postgres -c "ALTER DATABASE nextcloud_database OWNER TO oc_nextcloud;"
