@@ -116,6 +116,27 @@ docker exec -it nextcloud-aio-nextcloud rm -rf /var/www/html/custom_apps/mail
 docker exec -it --user www-data  nextcloud-aio-nextcloud php occ app:install mail
 ```
 
+Migrate your files
+
+```
+# copy files
+sourceDir="./data-backup/<user>/files/"
+targetDir="/mnt/nextcloud/<user>/files"
+
+sudo cp -rv $sourceDir $targetDir
+
+# set permissions
+sudo chown -R 33:33 /mnt/nextcloud/<user>/files/
+sudo chmod -R 755 /mnt/nextcloud/<user>/files/
+
+# clean Nextcloud file cache
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
+# update the Nextcloud index
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:scan --all
+# clean Nextcloud file cache --> not sure if before or after
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
+```
+
 # create talk bot for integration with Kuma
 
 ## in CLI
