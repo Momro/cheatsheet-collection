@@ -116,7 +116,7 @@ docker exec -it nextcloud-aio-nextcloud rm -rf /var/www/html/custom_apps/mail
 docker exec -it --user www-data  nextcloud-aio-nextcloud php occ app:install mail
 ```
 
-Migrate your files
+## Migrate your files
 
 ```
 # copy files
@@ -135,6 +135,46 @@ docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:scan --all
 # clean Nextcloud file cache --> not sure if before or after
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
+```
+
+# put files on network share
+
+NFS is suggested
+
+## create nfs share
+
+* Create share (here: QNAP 4.x)
+* open nfs settings (via users -> network shares -> search for the nextcloud share -> open "edit privileges for network share" -> new window, select privilege type "NFS host access")
+* set options
+  * RW
+  * all_squash (can also try "no_root_squash", but did not work for me)
+  * anon GID: administrators
+  * anon UID: you may choose the nextcloud user on your storage, for example
+<img width="825" height="139" alt="image" src="https://github.com/user-attachments/assets/71a3cc1d-1d5b-4178-9d7d-2f10d743b36b" />
+
+
+## in nextcloud host
+
+```
+# stop all containers
+docker stop nextcloud-aio-apache ; docker stop nextcloud-aio-nextcloud ; docker stop nextcloud-aio-database ; docker stop nextcloud-aio-redis ; docker stop nextcloud-aio-imaginary ; docker stop nextcloud-aio-talk ; docker stop nextcloud-aio-collabora ; docker stop nextcloud-aio-whiteboard ; docker stop nextcloud-aio-notify-push ; docker stop nextcloud-aio-mastercontainer ; echo "all containers stopped"
+
+# mount share
+sudo mount -t nfs <network share ip>:/nextcloud /mnt/nextcloud -o rw,relatime,vers=4,rsize=131072,wsize=131072,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys
+
+# move files
+# see hint above (copied from above, might be subject to duplicate data -> quality degradation) regarding how to copy files, e.g.:
+sudo cp -rv $sourceDir $targetDir
+sudo chown -R 33:33 /mnt/nextcloud/<user>/files/
+sudo chmod -R 755 /mnt/nextcloud/<user>/files/
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:scan --all
+docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
+
+# start master container
+docker compose up -d
+
+# go to https://<host>:8080 and start the rest of the containers
 ```
 
 # create talk bot for integration with Kuma
