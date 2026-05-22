@@ -18,6 +18,12 @@ discnumber=1
 ~/.local/bin/eyeD3 $file -a $interpret -A $albumtitel -N $gesamtzahl --add-image "$cover:FRONT_COVER" -t "$titel" -n $tracknumber -d $discnumber --genre "$genre" --release-year $releaseYear --preserve-file-times
 ```
 
+## get cover
+
+```
+read "coverURL?Cover file URL: "                                                                                                                                                         read "cover?Cover file name: "                                                                                                                                                             wget -O $cover $coverURL
+```
+
 ## adjust whole folder
 
 ```
