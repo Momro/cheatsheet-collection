@@ -126,8 +126,9 @@ targetDir="/mnt/nextcloud/<user>/files"
 sudo cp -rv $sourceDir $targetDir
 
 # set permissions
-sudo chown -R 33:33 /mnt/nextcloud/<user>/files/
-sudo chmod -R 755 /mnt/nextcloud/<user>/files/
+echo "this must be reviewed. 755 is for folders, 644 is for files"
+#sudo chown -R 33:33 /mnt/nextcloud/<user>/files/
+#sudo chmod -R 755 /mnt/nextcloud/<user>/files/
 
 # clean Nextcloud file cache
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
