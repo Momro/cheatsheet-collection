@@ -166,8 +166,9 @@ sudo mount -t nfs <network share ip>:/nextcloud /mnt/nextcloud -o rw,relatime,ve
 # move files
 # see hint above (copied from above, might be subject to duplicate data -> quality degradation) regarding how to copy files, e.g.:
 sudo cp -rv $sourceDir $targetDir
-sudo chown -R 33:33 /mnt/nextcloud/<user>/files/
-sudo chmod -R 755 /mnt/nextcloud/<user>/files/
+echo "this must be reviewed. 755 is for folders, 644 is for files"
+#sudo chown -R 33:33 /mnt/nextcloud/<user>/files/
+#sudo chmod -R 755 /mnt/nextcloud/<user>/files/
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:scan --all
 docker exec --user www-data -it nextcloud-aio-nextcloud php occ files:cleanup
